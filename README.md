@@ -13,7 +13,9 @@ cd MyWPSTool
 
 # 安装依赖
 pnpm install
-# 或者使用 npm
+# 使用bun
+bun install
+# 或者使用npm(不推荐)
 # npm install
 ```
 
@@ -21,4 +23,21 @@ pnpm install
 
 ```bash
 wpsjs debug
+pnpm run dev
+# 或者使用bun
+bun run dev
+# 或者使用npm(不推荐)
+npm run dev
+```
+
+## 构建
+
+```bash
+wpsjs build
+wpsjs build --exe
+pnpm run build
+# 或者使用bun
+bun run build
+# 或者使用npm(不推荐)
+npm run build
 ```
