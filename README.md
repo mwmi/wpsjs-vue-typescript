@@ -16,3 +16,9 @@ pnpm install
 # 或者使用 npm
 # npm install
 ```
+
+## 测试
+
+```bash
+wpsjs debug
+```
