@@ -1,6 +1,6 @@
-import { GetUrlPath, wpsAlert } from "./util.ts";
+import { GetUrlPath, wpsAlert } from "../utils/util.ts";
 
-function onbuttonclick(idStr: string, _param?: any) {
+export function onbuttonclick(idStr: string, _param?: any) {
   switch (idStr) {
     case "getDocName": {
       let doc = window.Application.ActiveWorkbook;
@@ -54,7 +54,3 @@ function onbuttonclick(idStr: string, _param?: any) {
     }
   }
 }
-
-export default {
-  onbuttonclick,
-};

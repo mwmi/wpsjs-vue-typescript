@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import taskPane from "../scripts/taskpane.ts";
-import { shellExecute } from "../scripts/util.ts";
+import * as taskPane from "../utils/taskpane.ts";
+import { shellExecute } from "../utils/util.ts";
 
 const DemoSpan = ref<string>("");
 const docName = ref<string>("");

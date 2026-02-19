@@ -3,13 +3,13 @@ import {
   GetUrlPath,
   GetRouterHash,
   wpsAlert,
-} from "./scripts/util.ts";
+} from "./utils/util.ts";
 
-import SystemDemo from "./scripts/systemdemo.ts";
+import { InvokeFromSystemDemo, openOfficeFileFromSystemDemo } from "./utils/systemdemo.ts";
 
 function OnAddinLoad(ribbonUI: any) {
   if (typeof (window.Application.ribbonUI) != "object") {
-    (window.Application as any).ribbonUI = ribbonUI;
+    window.Application.PluginStorage.setItem("ribbonUI", ribbonUI);
   }
 
   if (typeof (window.Application.Enum) != "object") { // 如果没有内置枚举值
@@ -17,8 +17,8 @@ function OnAddinLoad(ribbonUI: any) {
   }
 
   //这几个导出函数是给外部业务系统调用的
-  window.openOfficeFileFromSystemDemo = SystemDemo.openOfficeFileFromSystemDemo
-  window.InvokeFromSystemDemo = SystemDemo.InvokeFromSystemDemo
+  window.openOfficeFileFromSystemDemo = openOfficeFileFromSystemDemo
+  window.InvokeFromSystemDemo = InvokeFromSystemDemo
 
   window.Application.PluginStorage.setItem("EnableFlag", false) //往PluginStorage中设置一个标记，用于控制两个按钮的置灰
   window.Application.PluginStorage.setItem("ApiEventFlag", false) //往PluginStorage中设置一个标记，用于控制ApiEvent的按钮label

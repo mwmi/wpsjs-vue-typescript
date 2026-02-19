@@ -1,11 +1,11 @@
-import { wpsAlert } from "./util.ts";
+import { wpsAlert } from "../utils/util.ts";
 
 /**
  * 从业务系统打开 Office 文件
  * @param param - 参数对象或 JSON 字符串
  * @returns 处理结果
  */
-function openOfficeFileFromSystemDemo(
+export function openOfficeFileFromSystemDemo(
   param: string,
 ): Record<string, any> {
   const jsonObj =
@@ -19,7 +19,7 @@ function openOfficeFileFromSystemDemo(
  * @param param - 参数对象或 JSON 字符串
  * @returns 处理结果
  */
-function InvokeFromSystemDemo(
+export function InvokeFromSystemDemo(
   param: string,
 ): Record<string, any> {
   const jsonObj =
@@ -64,8 +64,3 @@ function InvokeFromSystemDemo(
       return { 其它xxx: "未知的操作指令" };
   }
 }
-
-export default {
-  openOfficeFileFromSystemDemo,
-  InvokeFromSystemDemo,
-};

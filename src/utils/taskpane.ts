@@ -1,6 +1,6 @@
-import { WPS_Enum } from "./util.ts";
+import { WPS_Enum } from "../utils/util.ts";
 
-function onbuttonclick(idStr: string, _param?: any) {
+export function onbuttonclick(idStr: string, _param?: any) {
   // _param 参数保留用于未来扩展，当前版本未使用
   if (typeof window.Application.Enum != "object") {
     // 如果没有内置枚举值
@@ -53,7 +53,3 @@ function onbuttonclick(idStr: string, _param?: any) {
     }
   }
 }
-
-export default {
-  onbuttonclick,
-};

@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
 import tailwindcss from '@tailwindcss/vite'
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+// @ts-ignore  // 临时忽略缺少类型声明的问题，待官方提供类型或自行补充声明文件
 import { functionsScanner, copyFile } from "wpsjs/vite_plugins";
 
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
     copyFile({ src: 'manifest.xml', dest: 'manifest.xml', }),
     copyFile({ src: 'ribbon.xml', dest: 'ribbon.xml', }),
     functionsScanner({
-      inputJsPath: 'src/scripts/functions.ts',
+      inputJsPath: 'src/utils/functions.ts',
       outputJsonPath: 'functions.json',
       namespace: 'HelloEt',
     }),

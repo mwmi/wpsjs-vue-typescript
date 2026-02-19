@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import dlgFunc from "../scripts/dialog.ts";
+import * as dlgFunc from "../utils/dialog.ts";
 import axios from "axios";
-import { shellExecute } from "../scripts/util.ts";
+import { shellExecute } from "../utils/util.ts";
 
 const DemoSpan = ref("");
 const docName = ref("");

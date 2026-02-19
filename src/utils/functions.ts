@@ -6,7 +6,7 @@
  * @param {boolean} arg2 - 支持bool参数
  * @returns {string} - 可以设置返回值类型
  */
-function custom_function(
+export function custom_function(
   arg0: string,
   arg1: number,
   arg2: boolean,

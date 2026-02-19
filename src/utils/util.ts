@@ -54,12 +54,3 @@ export function shellExecute(
 export function wpsAlert(message: string, type: 1 | 2 | 3 = 2): any {
   return Application.ExecuteExcel4Macro(`ALERT("${message}", "${type}")`);
 }
-
-// 为了向后兼容，仍然提供默认导出
-export default {
-  WPS_Enum,
-  GetUrlPath,
-  GetRouterHash,
-  shellExecute,
-  wpsAlert,
-};
