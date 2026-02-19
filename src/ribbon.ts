@@ -7,7 +7,7 @@ import {
 
 import { InvokeFromSystemDemo, openOfficeFileFromSystemDemo } from "./utils/systemdemo.ts";
 
-function OnAddinLoad(ribbonUI: any) {
+export function OnAddinLoad(ribbonUI: any) {
   if (typeof (window.Application.ribbonUI) != "object") {
     window.Application.PluginStorage.setItem("ribbonUI", ribbonUI);
   }
@@ -32,7 +32,7 @@ function OnAddinLoad(ribbonUI: any) {
 }
 
 var WebNotifycount = 0;
-function OnAction(control: { Id: any }) {
+export function OnAction(control: { Id: any }) {
   const eleId = control.Id;
   switch (eleId) {
     case "btnShowMsg":
@@ -114,7 +114,7 @@ function OnAction(control: { Id: any }) {
   return true;
 }
 
-function GetImage(control: { Id: any }) {
+export function GetImage(control: { Id: any }) {
   const eleId = control.Id;
   switch (eleId) {
     case "btnShowMsg":
@@ -128,7 +128,7 @@ function GetImage(control: { Id: any }) {
   return "images/newFromTemp.svg";
 }
 
-function OnGetEnabled(control: { Id: any }) {
+export function OnGetEnabled(control: { Id: any }) {
   const eleId = control.Id;
   switch (eleId) {
     case "btnShowMsg":
@@ -147,13 +147,13 @@ function OnGetEnabled(control: { Id: any }) {
   return true;
 }
 
-function OnGetVisible(control: { Id: any }) {
+export function OnGetVisible(control: { Id: any }) {
   const eleId = control.Id;
   console.log(eleId);
   return true;
 }
 
-function OnGetLabel(control: { Id: any }) {
+export function OnGetLabel(control: { Id: any }) {
   const eleId = control.Id;
   switch (eleId) {
     case "btnIsEnbable": {
@@ -168,11 +168,11 @@ function OnGetLabel(control: { Id: any }) {
   return "";
 }
 
-function OnNewDocumentApiEvent(doc: { Name: string }) {
+export function OnNewDocumentApiEvent(doc: { Name: string }) {
   wpsAlert("新建文件事件响应，取文件名: " + doc.Name);
 }
 
-function ToggleTaskPane(url: string) {
+export function ToggleTaskPane(url: string) {
   let tsId = window.Application.PluginStorage.getItem("taskpane_id");
   if (!tsId) {
     let tskpane = window.Application.CreateTaskPane(url);
@@ -185,13 +185,3 @@ function ToggleTaskPane(url: string) {
     tskpane.Visible = !tskpane.Visible;
   }
 }
-
-export default {
-  OnAddinLoad,
-  OnAction,
-  GetImage,
-  OnGetEnabled,
-  OnGetVisible,
-  OnGetLabel,
-  OnNewDocumentApiEvent,
-};
