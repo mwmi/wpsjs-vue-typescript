@@ -3,6 +3,27 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+const navCards: any = [
+  {
+    path: "/dialog",
+    icon: "pi pi-comments",
+    title: "对话框页面",
+    description: "演示对话框功能和文档操作能力",
+    buttonText: "访问对话框",
+    severity: "info",
+    bgClass: "bg-info text-info-contrast",
+  },
+  {
+    path: "/taskpane",
+    icon: "pi pi-window-maximize",
+    title: "任务窗格页面",
+    description: "展示任务窗格功能和侧边栏操作",
+    buttonText: "访问任务窗格",
+    severity: "success",
+    bgClass: "bg-success text-success-contrast",
+  },
+];
+
 const navigateTo = (path: string) => {
   console.log("导航到:", path);
   router.push(path);
@@ -50,39 +71,19 @@ const refreshPage = () => {
         </div>
       </template>
       <template #content>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- 对话框页面卡片 -->
-          <Card class="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
-            @click="navigateTo('/dialog')">
+        <div class="grid grid-cols-1 gap-6" :class="`md:grid-cols-${navCards.length}`">
+          <Card v-for="card in navCards" :key="card.path"
+            class="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+            @click="navigateTo(card.path)">
             <template #content>
               <div class="text-center p-6">
-                <div
-                  class="bg-info text-info-contrast rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <i class="pi pi-comments text-2xl"></i>
+                <div :class="[card.bgClass, 'rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4']">
+                  <i :class="[card.icon, 'text-2xl']"></i>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">对话框页面</h3>
-                <p class="text-surface-600 mb-4">
-                  演示对话框功能和文档操作能力
-                </p>
-                <Button label="访问对话框" icon="pi pi-arrow-right" class="w-full" severity="info" outlined />
-              </div>
-            </template>
-          </Card>
-
-          <!-- 任务窗格页面卡片 -->
-          <Card class="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
-            @click="navigateTo('/taskpane')">
-            <template #content>
-              <div class="text-center p-6">
-                <div
-                  class="bg-success text-success-contrast rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <i class="pi pi-window-maximize text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">任务窗格页面</h3>
-                <p class="text-surface-600 mb-4">
-                  展示任务窗格功能和侧边栏操作
-                </p>
-                <Button label="访问任务窗格" icon="pi pi-arrow-right" class="w-full" severity="success" outlined />
+                <h3 class="text-xl font-semibold mb-2">{{ card.title }}</h3>
+                <p class="text-surface-600 mb-4">{{ card.description }}</p>
+                <Button :label="card.buttonText" icon="pi pi-arrow-right" class="w-full" :severity="card.severity"
+                  outlined />
               </div>
             </template>
           </Card>

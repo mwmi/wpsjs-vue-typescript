@@ -6,6 +6,6 @@ import { onMounted } from 'vue'
 import * as ribbon from './ribbon.ts'
 
 onMounted(() => {
-  window.ribbon = ribbon
-})
+  Object.assign(window, ribbon);
+});
 </script>

@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YRD工具面板</title>
+    <link rel="stylesheet" href="../css/ui.css">
+    <link rel="stylesheet" href="../css/table.css">
+    <script type="text/javascript" src="../js/util.js"></script>
+    <script type="text/javascript" src="../js/table.js"></script>
+    <script type="text/javascript" src="../.debugTemp/wpsjsrpcsdk.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "宋体", "SimSun", "Helvetica", "Arial", sans-serif;
+        }
+
+        :root {
+            /* 主题色 */
+            --primary: #020617;
+            --primary-hover: #1e293b;
+            --primary-light: #f1f5f9;
+
+            /* 边框色 */
+            --border: #cbd5e1;
+            --border-light: #e2e8f0;
+
+            /* 背景色 */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-light: #f8fafc;
+            --bg-hover: #f1f5f9;
+            --bg-tag: #f1f5f9;
+            --bg-selected: #e0e0e0;
+
+            /* 文本色 */
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-dark: #0f172a;
+            --text-on-primary: #ffffff;
+
+            /* 圆角 */
+            --radius-sm: 6px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-xl: 12px;
+            --radius-full: 9999px;
+
+            /* 阴影 */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            --shadow-primary: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-primary-hover: 0 6px 10px -1px rgba(0, 0, 0, 0.4);
+            --shadow-tooltip: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-toast: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+            /* 过渡 */
+            --transition: 0.2s ease;
+
+            /* 间距（已转换为 px） */
+            --gap-sm: 8px;
+            --gap-md: 12px;
+            --gap-lg: 16px;
+            --gap-xl: 24px;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+
+        /* WebKit 内核 */
+        html::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        html::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        html::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        html::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* ----- 卡片主体 ----- */
+        .card {
+            width: 100%;
+            max-width: 1400px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--gap-xl);
+            box-shadow: var(--shadow-md);
+            transition: box-shadow var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ----- 选项卡 ----- */
+        .tabs {
+            display: flex;
+            gap: 32px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+            margin-bottom: var(--gap-xl);
+        }
+
+        .tab {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 4px 16px 4px;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab svg {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .tab::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width var(--transition);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            width: 100%;
+        }
+
+        .tab:not(.active):hover {
+            color: #334155;
+        }
+
+        /* ----- 双栏网格 ----- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--gap-lg);
+        }
+
+        @media (max-width: 1500px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .card {
+                padding: 0 15px;
+            }
+        }
+
+        /* ----- 分组卡片 ----- */
+        .group {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+        }
+
+        .group-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .group-title span {
+            background: var(--bg-tag);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            color: #334155;
+            margin-left: 12px;
+        }
+
+        .group-pair {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--gap-md);
+            width: 100%;
+        }
+
+        .group-pair .group {
+            flex: 1 1 calc(50% - 6px);
+            min-width: 140px;
+        }
+
+        .subgroup {
+            margin-bottom: var(--gap-xl);
+        }
+
+        .subgroup-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+        }
+
+        /* ----- 单选、滑块、颜色块等 ----- */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
+            margin-bottom: 16px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.15s;
+            border-radius: var(--radius-sm);
+            padding: 4px 8px;
+        }
+
+        .radio-item:hover {
+            color: var(--primary);
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        input[type="radio"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+            margin-right: 12px;
+            transition: 0.15s;
+            cursor: pointer;
+        }
+
+        input[type="radio"]:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+        }
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+            background: var(--bg-light);
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            margin: 12px 0 16px 0;
+            transition: var(--transition);
+        }
+
+        .color-row:hover {
+            background: var(--bg-hover);
+        }
+
+        .color-block {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .swatch {
+            width: 24px;
+            height: 24px;
+            background: #2d3138;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .swatch:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .transparency {
+            display: flex;
+            align-items: center;
+            gap: var(--gap-md);
+            flex-wrap: wrap;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            height: 6px;
+            background: var(--border-light);
+            border-radius: var(--radius-full);
+            -webkit-appearance: none;
+            appearance: none;
+            transition: background var(--transition);
+        }
+
+        input[type="range"]:hover {
+            background: var(--border);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.15s;
+            cursor: pointer;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {
+            transform: scale(1.15);
+            background: #f5f5f5;
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .percent {
+            font-size: 12px;
+            background: var(--bg-tag);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            color: var(--text-primary);
+            font-weight: 500;
+            min-width: 48px;
+            text-align: center;
+        }
+
+        /* ----- 数字输入控件 ----- */
+        .input-number {
+            display: inline-flex;
+            align-items: stretch;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: white;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .input-number:hover,
+        .input-number:focus-within {
+            border-color: var(--primary);
+        }
+
+        .input-number:focus-within {
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-number input {
+            width: 70px;
+            padding: 8px 0 8px 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            background: transparent;
+            outline: none;
+            text-align: left;
+        }
+
+        .input-number-controls {
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border-light);
+            background: var(--bg-light);
+        }
+
+        .input-number-controls button {
+            background: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.1s;
+            line-height: 1;
+            flex: 1;
+        }
+
+        .input-number-controls button:first-child {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .input-number-controls button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .field {
+            display: flex;
+            align-items: center;
+            gap: 8px 12px;
+            flex-wrap: wrap;
+        }
+
+        .field label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 450;
+        }
+
+        input[type="number"].normal-number {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        input[type="number"].normal-number:hover,
+        input[type="number"].normal-number:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        /* ----- 原生下拉框增强 ----- */
+        select {
+            padding: 8px 32px 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            background-color: white;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: var(--transition);
+            cursor: pointer;
+            color: var(--text-primary);
+            font-weight: 450;
+            min-width: 120px;
+        }
+
+        select:hover {
+            border-color: var(--primary);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23020617" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-color: var(--primary-light);
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        /* ----- 自定义下拉框 ----- */
+        .custom-select {
+            position: relative;
+            display: inline-block;
+            width: 180px;
+        }
+
+        .custom-select-button {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 8px 16px;
+            font-size: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .custom-select-button:hover {
+            border-color: var(--primary);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 4px;
+            z-index: 200;
+            display: none;
+        }
+
+        .custom-select-dropdown.show {
+            display: block;
+        }
+
+        .custom-select-option {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .custom-select-option:hover {
+            background: #f5f5f5;
+            color: var(--primary);
+        }
+
+        .custom-select-option.selected {
+            background: var(--bg-selected);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* ----- 按钮 ----- */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            row-gap: var(--gap-sm);
+            column-gap: 1%;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            transition: all var(--transition);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-on-primary);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-primary-hover);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-right: 4px;
+            white-space: nowrap;
+            line-height: 1;
+            align-self: center;
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* 按钮组内的分割线 */
+        .button-group .divider,
+        .vertical-buttons .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: var(--gap-sm) 0;
+            width: 100%;
+        }
+
+        .vertical-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--gap-sm);
+        }
+
+        .vertical-buttons .btn {
+            width: 100%;
+        }
+
+        /* 内联按钮组：无缝拼接 */
+        .button-group-inline {
+            display: flex;
+            gap: 0;
+            width: 100%;
+        }
+
+        .button-group-inline .btn {
+            border-radius: 0;
+            margin: 0;
+            padding: 8px 16px;
+            flex: 1;
+        }
+
+        .button-group-inline .btn:first-child {
+            border-top-left-radius: var(--radius-md);
+            border-bottom-left-radius: var(--radius-md);
+        }
+
+        .button-group-inline .btn:last-child {
+            border-top-right-radius: var(--radius-md);
+            border-bottom-right-radius: var(--radius-md);
+        }
+
+        .button-group-inline .btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* 可编辑数值控件 */
+        .editable-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 6px 0;
+            width: 100%;
+        }
+
+        .stepper-btn {
+            width: 20%;
+            height: 32px;
+            border: 1px solid var(--border);
+            background: white;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .stepper-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .stepper-input {
+            width: 60%;
+            height: 32px;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
+            outline: none;
+        }
+
+        .stepper-input::-webkit-outer-spin-button,
+        .stepper-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .stepper-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .editable-stepper .stepper-btn:first-of-type {
+            border-top-left-radius: var(--radius-md);
+            border-bottom-left-radius: var(--radius-md);
+        }
+
+        .editable-stepper .stepper-btn:last-of-type {
+            border-bottom-right-radius: var(--radius-md);
+            border-top-right-radius: var(--radius-md);
+        }
+
+        /* ----- Tooltip ----- */
+        span[data-tooltip] {
+            padding: 4px;
+            font-weight: 600;
+        }
+
+        .global-tooltip {
+            position: fixed;
+            background: var(--primary);
+            color: white;
+            font-size: 12.8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            box-shadow: var(--shadow-tooltip);
+            pointer-events: none;
+            z-index: 10000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity var(--transition), transform var(--transition);
+            transform-origin: center bottom;
+            display: none;
+            --arrow-left: 50%;
+        }
+
+        .global-tooltip.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .global-tooltip::before {
+            content: '';
+            position: absolute;
+            left: var(--arrow-left);
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-bottom-color: var(--primary);
+            top: -12px;
+        }
+
+        .global-tooltip.tooltip-above::before {
+            border-bottom-color: transparent;
+            border-top-color: var(--primary);
+            top: auto;
+            bottom: -12px;
+        }
+
+        .global-tooltip.tooltip-above {
+            transform-origin: center top;
+        }
+
+        /* ----- 分段控件 ----- */
+        .segmented {
+            display: flex;
+            background: var(--bg-tag);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .segment-item {
+            padding: 6px 20px;
+            font-size: 12px;
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+        }
+
+        .segment-item.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ----- 消息容器 ----- */
+        .message-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-sm);
+            z-index: 10000;
+            pointer-events: none;
+            max-width: 380px;
+            width: auto;
+            align-items: flex-end;
+        }
+
+        .message-toast {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-toast);
+            display: flex;
+            align-items: center;
+            gap: var(--gap-md);
+            font-size: 14px;
+            font-weight: 500;
+            animation: slideIn 0.25s;
+            width: fit-content;
+            max-width: 100%;
+            pointer-events: auto;
+            transition: opacity 0.25s, transform 0.25s;
+        }
+
+        .message-toast.hide {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(380px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ----- 模态框 ----- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity var(--transition), visibility var(--transition);
+        }
+
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: white;
+            width: 400px;
+            max-width: 90%;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-modal);
+            padding: var(--gap-xl);
+            transform: scale(0.95);
+            transition: transform 0.2s ease-out;
+        }
+
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .modal-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--gap-xl);
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+        }
+
+        /* ----- 等待效果 ----- */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity var(--transition), visibility var(--transition);
+        }
+
+        .loading-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 24px 32px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border-light);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ----- 面板切换隐藏 ----- */
+        .panel.hidden {
+            display: none;
+        }
+
+        /* ----- 多选框列表等 ----- */
+        .list-section {
+            margin-top: var(--gap-xl);
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-xl);
+        }
+
+        .select-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-sm);
+        }
+
+        select[multiple] {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: white;
+            transition: var(--transition);
+        }
+
+        select[multiple]:hover,
+        select[multiple]:focus {
+            border-color: var(--primary);
+        }
+
+        select[multiple]:focus {
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        select[multiple] option {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            margin: 4px 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 24px 0 12px;
+        }
+
+        .group-pair .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .btn-export {
+            width: 48%;
+        }
+
+        .tab::before {
+            content: "";
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            background-image: url('../images/开单.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            vertical-align: -0.15em;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 消息堆叠容器（固定最右端，右对齐） -->
+    <div id="messageContainer" class="message-container"></div>
+
+    <!-- 模态确认框 -->
+    <div id="modalConfirm" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">确认操作</div>
+            <div class="modal-content" id="modalMessage">您确定要执行此操作吗？</div>
+            <div class="modal-actions">
+                <button id="modalCancel" class="btn">取消</button>
+                <button id="modalOk" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 等待加载效果 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <span>处理中，请稍候...</span>
+        </div>
+    </div>
+    <div class="card">
+        <!-- 选项卡 -->
+        <div class="tabs" id="tabHeaders">
+            <div class="tab active" data-panel="kaidanPanel">开单</div>
+        </div>
+
+        <div class="panel-container">
+            <!-- 形状选项面板 -->
+            <div id="kaidanPanel" class="panel">
+                <div class="grid-2">
+                    <!-- 左列：填充与线条 -->
+                    <div class="group-pair">
+                        <div class="group">
+                            <div class="subgroup-header">⚙️ 格式设置</div>
+                            <div class="button-group vertical-buttons">
+                                <button data-tooltip="格式化页面" class="btn btn-primary" id="btnApply">📝格式化</button>
+                                <button class="btn btn-secondary" id="btnCancel">✏️乘号替换</button>
+                                <button class="btn btn-secondary" id="btnShowSelect">✏️插入括号</button>
+                                <button class="btn btn-secondary" id="btnLoading">✏️直径符号</button>
+                                <!-- 可编辑数值控件 -->
+                                <div class="editable-stepper">
+                                    <span class="btn-text" data-tooltip="设置单元格首行缩进长度"
+                                        style="border-bottom:1px dashed #056de8;margin-right: 8px;">缩进</span>
+                                    <button class="stepper-btn minus">−</button>
+                                    <input type="number" class="stepper-input" value="0" min="0" max="10" step="1">
+                                    <button class="stepper-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="subgroup-header">🪟 表格操作</div>
+                            <div class="button-group vertical-buttons">
+                                <button class="btn btn-primary" id="btnApply">📄新建表格</button>
+                                <button class="btn btn-secondary" id="btnCancel">🗑️清除内容</button>
+                                <button class="btn btn-secondary" id="btnDelete">❌删除表格</button>
+                                <div class="divider"></div>
+                                <button class="btn btn-secondary" id="btnDelete">自适应文本</button>
+                                <button class="btn btn-secondary" id="btnDelete">推荐字体</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group">
+                        <div class="subgroup-header">📃 PDF导出</div>
+                        <div class="button-group">
+                            <button class="btn btn-primary btn-export" id="btnPDFExport">导出PDF</button>
+                            <button class="btn btn-secondary btn-export" id="btnPDFDelete">删除PDF</button>
+                            <div class="group-pair">
+                                <span class="btn-text" data-tooltip="点击下列按钮生成对应pdf"
+                                    style="border-bottom:1px dashed #056de8;">📚 PDF文档生成</span>
+                                <div class="button-group-inline">
+                                    <button class="btn btn-secondary" id="btnGenerate3">三联</button>
+                                    <button class="btn btn-secondary" id="btnGenerate2">二联</button>
+                                    <button class="btn btn-secondary" id="btnGenerate1">一联</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group-pair">
+                        <div class="group">
+                            <div class="subgroup-header">📕 导出预览</div>
+                            <div class="button-group vertical-buttons">
+                                <button class="btn btn-primary" id="btnReadFiles">🏷️刷新列表</button>
+                                <div class="table-container" id="readfileTable"></div>
+                                <div class="table-container" id="readOutputTable"></div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="subgroup-header">📂 开单文档</div>
+                            <div class="button-group vertical-buttons">
+                                <button class="btn btn-primary" id="btnApply">📁添加文档</button>
+                                <div class="table-container" id="openfileTable"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript" src="../js/ui.js"></script>
+    <script type="text/javascript" src="../js/taskpane.js"></script>
+    <script>
+        (function () {
+            "use strict";
+
+            // ---------- 等待 DOM 加载完成 ----------
+            function init() {
+                // ---------- 全局消息提示（堆叠 + 消失动画）----------
+                const messageContainer = document.getElementById('messageContainer');
+                function showMessage(text, type = 'info') {
+                    const toast = document.createElement('div');
+                    toast.className = 'message-toast';
+                    let icon, bgColor;
+                    switch (type) {
+                        case 'success': icon = '✅'; bgColor = '#f0faf0'; break;
+                        case 'error': icon = '❌'; bgColor = '#fff5f5'; break;
+                        case 'warning': icon = '⚠️'; bgColor = '#fff8e7'; break;
+                        default: icon = 'ℹ️'; bgColor = '#f1f7ff';
+                    }
+                    toast.style.background = bgColor;
+                    toast.innerHTML = `<span style="font-size:1.2rem;">${icon}</span><span>${text}</span>`;
+                    messageContainer.appendChild(toast);
+                    setTimeout(() => {
+                        toast.classList.add('hide');
+                        toast.addEventListener('transitionend', function () {
+                            if (toast.parentNode) toast.remove();
+                        }, { once: true });
+                    }, 3000);
+                }
+
+                // ---------- 模态确认框 ----------
+                const modalOverlay = document.getElementById('modalConfirm');
+                const modalMessage = document.getElementById('modalMessage');
+                let modalResolve = null;
+                function showModalConfirm(message = '您确定要执行此操作吗？') {
+                    modalMessage.innerText = message;
+                    modalOverlay.classList.add('show');
+                    return new Promise((resolve) => { modalResolve = resolve; });
+                }
+                function closeModal() {
+                    modalOverlay.classList.remove('show');
+                    modalResolve = null;
+                }
+
+                // ---------- 等待效果 ----------
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                function showLoading(duration = 2000) {
+                    loadingOverlay.classList.add('show');
+                    if (duration > 0) setTimeout(() => loadingOverlay.classList.remove('show'), duration);
+                }
+                function hideLoading() { loadingOverlay.classList.remove('show'); }
+
+                // ---------- 工具函数：根据输入框获取步进参数 ----------
+                function getStepInfo(inputEl) {
+                    if (!inputEl) return { step: 1, min: -Infinity, max: Infinity };
+                    let mi = inputEl.getAttribute("min");
+                    let ma = inputEl.getAttribute("max");
+                    let st = inputEl.getAttribute("step");
+                    let min = mi ? parseFloat(mi) : -Infinity;
+                    let max = ma ? parseFloat(ma) : Infinity;
+                    let step = st ? parseFloat(st) : 1;
+                    return { step: step, min: min, max: max };
+                }
+
+                // ---------- 全局事件委托 ----------
+                function handleDocumentClick(e) {
+                    const target = e.target;
+
+                    // ----- 数字输入：增加 -----
+                    if (target.matches('.plus, .inc, .incShapeW, .incShapeH, #widthInc, #fontSizeInc') ||
+                        (target.closest && target.closest('.plus'))) {
+                        e.preventDefault();
+                        let input = null;
+                        if (target.id === 'widthInc') input = document.getElementById('widthInput');
+                        else if (target.id === 'fontSizeInc') input = document.getElementById('fontSizeInput');
+                        else if (target.classList.contains('incShapeW')) input = document.getElementById('shapeWidthInput');
+                        else if (target.classList.contains('incShapeH')) input = document.getElementById('shapeHeightInput');
+                        else if (target.closest('.editable-stepper')) {
+                            input = target.closest('.editable-stepper').querySelector('.stepper-input');
+                        }
+                        if (input) {
+                            const { step, min, max } = getStepInfo(input);
+                            let val = parseFloat(input.value) || 0;
+                            val = Math.min(max, val + step);
+                            val = Math.max(min, val);
+                            input.value = val.toFixed(2).replace(/\.00$/, '');
+                            // 显示对应提示消息
+                            if (input.id === 'widthInput' || input.id === 'shapeWidthInput' ||
+                                input.id === 'shapeHeightInput' || input.id === 'fontSizeInput') {
+                                let msg = '';
+                                if (input.id === 'widthInput') msg = `宽度: ${input.value}px`;
+                                else if (input.id === 'shapeWidthInput') msg = `宽度: ${input.value}px`;
+                                else if (input.id === 'shapeHeightInput') msg = `高度: ${input.value}px`;
+                                else if (input.id === 'fontSizeInput') msg = `字号: ${input.value}pt`;
+                                if (msg) showMessage(msg, 'info');
+                            }
+                        }
+                        return;
+                    }
+
+                    // ----- 数字输入：减少 -----
+                    if (target.matches('.minus, .dec, .decShapeW, .decShapeH, #widthDec, #fontSizeDec') ||
+                        (target.closest && target.closest('.minus'))) {
+                        e.preventDefault();
+                        let input = null;
+                        if (target.id === 'widthDec') input = document.getElementById('widthInput');
+                        else if (target.id === 'fontSizeDec') input = document.getElementById('fontSizeInput');
+                        else if (target.classList.contains('decShapeW')) input = document.getElementById('shapeWidthInput');
+                        else if (target.classList.contains('decShapeH')) input = document.getElementById('shapeHeightInput');
+                        else if (target.closest('.editable-stepper')) {
+                            input = target.closest('.editable-stepper').querySelector('.stepper-input');
+                        }
+                        if (input) {
+                            const { step, min, max } = getStepInfo(input);
+                            let val = parseFloat(input.value) || 0;
+                            val = Math.max(min, val - step);
+                            val = Math.min(max, val);
+                            input.value = val.toFixed(2).replace(/\.00$/, '');
+                            if (input.id === 'widthInput' || input.id === 'shapeWidthInput' ||
+                                input.id === 'shapeHeightInput' || input.id === 'fontSizeInput') {
+                                let msg = '';
+                                if (input.id === 'widthInput') msg = `宽度: ${input.value}px`;
+                                else if (input.id === 'shapeWidthInput') msg = `宽度: ${input.value}px`;
+                                else if (input.id === 'shapeHeightInput') msg = `高度: ${input.value}px`;
+                                else if (input.id === 'fontSizeInput') msg = `字号: ${input.value}pt`;
+                                if (msg) showMessage(msg, 'info');
+                            }
+                        }
+                        return;
+                    }
+
+                    // ----- 模态确认框 -----
+                    if (target.id === 'modalCancel' || target.id === 'modalOk' || target === modalOverlay) {
+                        if (target.id === 'modalCancel' || target === modalOverlay) {
+                            if (modalResolve) modalResolve(false);
+                            closeModal();
+                            showMessage('已取消操作', 'info');
+                        } else if (target.id === 'modalOk') {
+                            if (modalResolve) modalResolve(true);
+                            closeModal();
+                            showMessage('已确认操作', 'success');
+                        }
+                        return;
+                    }
+
+                    // ----- 分段控件 -----
+                    if (target.classList.contains('segment-item')) {
+                        const parent = target.parentNode;
+                        parent.querySelectorAll('.segment-item').forEach(c => c.classList.remove('active'));
+                        target.classList.add('active');
+                        showMessage(`端点: ${target.innerText}`, 'info');
+                        return;
+                    }
+
+                    // ----- 功能按钮 -----
+                    if (target.id === 'btnApply') { showMessage('✔ 应用形状设置成功', 'success'); return; }
+                    if (target.id === 'btnCancel') { showMessage('取消操作', 'warning'); return; }
+                    if (target.id === 'btnTextApply') { showMessage('✔ 文本设置已应用', 'success'); return; }
+                    if (target.id === 'btnTextPreview') { showMessage('👁 预览模式 (演示)', 'info'); return; }
+                    if (target.id === 'btnShowSelect') {
+                        const single = document.getElementById('singleSelectDemo');
+                        const singleVal = single.options[single.selectedIndex]?.text || '未选';
+                        const multi = document.getElementById('multiSelectDemo');
+                        const selected = Array.from(multi.selectedOptions).map(opt => opt.text).join(', ') || '无';
+                        showMessage(`下拉框: ${singleVal} | 多选: ${selected}`, 'info');
+                        return;
+                    }
+                    if (target.id === 'btnModalConfirm') {
+                        showModalConfirm('是否保存当前设置？').then(result => { if (result) showMessage('设置已保存', 'success'); });
+                        return;
+                    }
+                    if (target.id === 'btnLoading') {
+                        showLoading(2000);
+                        showMessage('等待效果演示 (2秒后消失)', 'info');
+                        return;
+                    }
+
+                    // ----- 气泡确认框（删除按钮）-----
+                    if (target.id === 'btnDelete') {
+                        e.stopPropagation();
+                        const existing = document.querySelector('.popconfirm-bubble');
+                        if (existing) existing.remove();
+                        const bubble = document.createElement('div');
+                        bubble.className = 'popconfirm-bubble';
+                        bubble.style = 'position:absolute; background:white; border-radius:10px; box-shadow:0 16px 30px rgba(0,0,0,0.2); padding:16px 20px; z-index:2000; display:flex; flex-direction:column; gap:14px; border:1px solid #eaedf0;';
+                        const rect = target.getBoundingClientRect();
+                        bubble.style.top = rect.top + window.scrollY - 90 + 'px';
+                        bubble.style.left = rect.left + window.scrollX + 'px';
+                        bubble.innerHTML = `<span style="font-size:14px; font-weight:500;">确认删除该项?</span><div style="display:flex; gap:12px; justify-content:flex-end;"><button id="popYes" style="background:#056de8; border:none; padding:6px 20px; border-radius:10px; color:white; font-size:13px; cursor:pointer;">确定</button><button id="popNo" style="background:white; border:1px solid #ccd2d9; padding:6px 20px; border-radius:10px; font-size:13px; cursor:pointer;">取消</button></div>`;
+                        document.body.appendChild(bubble);
+                        return;
+                    }
+
+                    // ----- 气泡内按钮 -----
+                    if (target.id === 'popYes' || target.id === 'popNo') {
+                        const bubble = target.closest('.popconfirm-bubble');
+                        if (bubble) bubble.remove();
+                        showMessage(target.id === 'popYes' ? '已删除 (演示)' : '取消删除', target.id === 'popYes' ? 'error' : 'info');
+                        return;
+                    }
+
+                    // ----- 自定义下拉框：按钮点击 -----
+                    if (target.classList.contains('custom-select-button')) {
+                        e.stopPropagation();   // 避免触发下方的关闭逻辑（但保留冒泡以便全局关闭检测，这里停止传播更好）
+                        const dropdown = document.getElementById('fontDropdown');
+                        if (dropdown) dropdown.classList.toggle('show');
+                        return;
+                    }
+
+                    // ----- 自定义下拉框：选项点击 -----
+                    if (target.classList.contains('custom-select-option')) {
+                        e.stopPropagation();
+                        const value = target.dataset.value || target.innerText;
+                        const selectedFontSpan = document.getElementById('selectedFont');
+                        if (selectedFontSpan) selectedFontSpan.innerText = value;
+                        const dropdown = document.getElementById('fontDropdown');
+                        if (dropdown) {
+                            dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                            target.classList.add('selected');
+                            dropdown.classList.remove('show');
+                        }
+                        showMessage(`字体设置为: ${value}`, 'success');
+                        return;
+                    }
+
+                    // ----- 颜色块点击 -----
+                    if (target.classList.contains('swatch')) {
+                        showMessage('颜色拾取器 (演示)', 'info');
+                        return;
+                    }
+
+                    // ---------- 全局关闭逻辑 ----------
+                    // 1. 关闭自定义下拉框（点击外部时）
+                    const dropdown = document.getElementById('fontDropdown');
+                    if (dropdown && dropdown.classList.contains('show')) {
+                        if (!target.closest('.custom-select-button') && !target.closest('#fontDropdown')) {
+                            dropdown.classList.remove('show');
+                        }
+                    }
+                    // 2. 关闭气泡（点击外部时）
+                    const bubble = document.querySelector('.popconfirm-bubble');
+                    if (bubble && !bubble.contains(target) && target.id !== 'btnDelete') {
+                        bubble.remove();
+                    }
+                }
+
+                function handleDocumentInput(e) {
+                    const target = e.target;
+                    // 数字输入框：过滤非数字（针对 stepper-input）
+                    if (target.classList.contains('stepper-input')) {
+                        target.value = target.value.replace(/[^0-9]/g, '');
+                        return;
+                    }
+                    // 滑块联动
+                    if (target.id === 'fillTransparency') {
+                        const p = document.getElementById('fillPercent');
+                        if (p) p.innerText = target.value + '%';
+                        return;
+                    }
+                    if (target.id === 'lineTransparency') {
+                        const p = document.getElementById('linePercent');
+                        if (p) p.innerText = target.value + '%';
+                        return;
+                    }
+                    if (target.id === 'blurRange') {
+                        const p = document.getElementById('blurPercent');
+                        if (p) p.innerText = target.value + 'pt';
+                        return;
+                    }
+                }
+
+                function handleDocumentChange(e) {
+                    const target = e.target;
+                    // 数字输入框：范围校验
+                    if (target.classList.contains('stepper-input') ||
+                        ['widthInput', 'shapeWidthInput', 'shapeHeightInput', 'fontSizeInput'].includes(target.id)) {
+                        const { min, max } = getStepInfo(target);
+                        let v = parseFloat(target.value) || 0;
+                        if (min !== undefined) v = Math.max(min, v);
+                        if (max !== undefined) v = Math.min(max, v);
+                        target.value = v;
+                        return;
+                    }
+                    // 单选按钮提示
+                    if (target.name === 'fillType' && target.checked) { showMessage(`填充: ${target.value}`, 'info'); return; }
+                    if (target.name === 'lineType' && target.checked) { showMessage(`线条: ${target.value}`, 'info'); return; }
+                    // 滑块 change 提示
+                    if (target.id === 'fillTransparency') { showMessage(`填充透明度 ${target.value}%`, 'info'); return; }
+                    if (target.id === 'lineTransparency') { showMessage(`线条透明度 ${target.value}%`, 'info'); return; }
+                    // 下拉框 change 提示
+                    if (target.id === 'shadowSelect') { showMessage(`阴影: ${target.value}`, 'warning'); return; }
+                    if (target.id === 'compoundType') { showMessage(`复合类型: ${target.value}`, 'info'); return; }
+                    if (target.id === 'dashType') { showMessage(`短划线: ${target.value}`, 'info'); return; }
+                    if (target.id === 'rotateInput') { showMessage(`旋转: ${target.value}°`, 'info'); return; }
+                }
+
+                // ---------- 挂载全局委托 ----------
+                document.addEventListener('click', handleDocumentClick);
+                document.addEventListener('input', handleDocumentInput);
+                document.addEventListener('change', handleDocumentChange);
+
+                (function () {
+                    /**
+                     * 初始化所有带有 data-tooltip 的元素（无容器版）
+                     * @param {string} selector - 触发元素的选择器，默认 '[data-tooltip]'
+                     * @param {Object} options - 配置项
+                     * @param {number} options.gap - 与触发元素的间距，默认 10
+                     * @param {number} options.duration - 动画时长 (ms)，默认 200
+                     * @returns {Function} destroy - 销毁函数，用于清理事件监听和移除 tooltip
+                     */
+                    window.initTooltips = function (selector = '[data-tooltip]', options = {}) {
+                        const gap = options.gap ?? 10;
+                        const duration = options.duration ?? 200;
+                        const elements = Array.from(document.querySelectorAll(selector));
+                        if (!elements.length) return () => { };
+
+                        // 创建全局唯一的 tooltip 元素（如果不存在）
+                        let tooltip = document.querySelector('.global-tooltip');
+                        if (!tooltip) {
+                            tooltip = document.createElement('div');
+                            tooltip.className = 'global-tooltip';
+                            document.body.appendChild(tooltip);
+                        }
+
+                        let hideTimeout = null;       // 隐藏动画定时器
+                        let currentTarget = null;      // 当前触发元素
+
+                        // 强制立即隐藏 tooltip（无动画）
+                        function forceHide() {
+                            if (hideTimeout) {
+                                clearTimeout(hideTimeout);
+                                hideTimeout = null;
+                            }
+                            tooltip.classList.remove('show', 'tooltip-above');
+                            tooltip.style.display = 'none';
+                        }
+
+                        // 淡出隐藏（带动画）
+                        function fadeOut() {
+                            if (hideTimeout) clearTimeout(hideTimeout);
+                            tooltip.classList.remove('show');
+                            hideTimeout = setTimeout(() => {
+                                tooltip.style.display = 'none';
+                                hideTimeout = null;
+                            }, duration);
+                        }
+
+                        // 计算 tooltip 位置并显示
+                        function showTooltip(target) {
+                            const content = target.getAttribute('data-tooltip');
+                            if (!content) return;
+
+                            // 如果已有隐藏定时器，取消它
+                            if (hideTimeout) {
+                                clearTimeout(hideTimeout);
+                                hideTimeout = null;
+                            }
+
+                            // 设置内容
+                            tooltip.textContent = content;
+
+                            // 临时显示到屏幕外，测量尺寸（同时保持透明/隐藏状态）
+                            tooltip.style.display = 'block';
+                            tooltip.style.left = '-9999px';
+                            tooltip.style.top = '-9999px';
+                            tooltip.classList.remove('show', 'tooltip-above');
+
+                            // 获取 tooltip 宽高
+                            const tipW = tooltip.offsetWidth;
+                            const tipH = tooltip.offsetHeight;
+
+                            // 触发元素的位置信息
+                            const targetRect = target.getBoundingClientRect();
+                            const targetCenterX = targetRect.left + targetRect.width / 2;
+
+                            const vw = window.innerWidth;
+                            const vh = window.innerHeight;
+
+                            // 默认尝试放在上方
+                            let left = targetCenterX - tipW / 2;
+                            let top = targetRect.top - gap - tipH;
+                            let isAbove = true;
+
+                            // 空间判断
+                            const spaceAbove = targetRect.top - gap - tipH;
+                            const spaceBelow = vh - (targetRect.bottom + gap) - tipH;
+
+                            if (spaceAbove < 0 && spaceBelow >= 0) {
+                                // 上方不足，下方充足 → 切换到下方
+                                top = targetRect.bottom + gap;
+                                isAbove = false;
+                            } else if (spaceAbove < 0 && spaceBelow < 0) {
+                                // 上下均不足，强制放在上方（后续边界限制会处理）
+                                top = targetRect.top - gap - tipH;
+                                isAbove = true;
+                            }
+
+                            // 水平边界限制
+                            if (left < 0) left = gap;
+                            if (left + tipW > vw) left = vw - tipW - gap;
+
+                            // 垂直边界限制
+                            if (top < 0) top = gap;
+                            if (top + tipH > vh) top = vh - tipH - gap;
+
+                            // 重新确定实际方向（可能被边界修正改变）
+                            if (top + tipH <= targetRect.top + 5) isAbove = true;
+                            else if (top >= targetRect.bottom - 5) isAbove = false;
+                            else isAbove = (top < targetRect.top);
+
+                            // 计算箭头偏移（相对于 tooltip 左边缘）
+                            let arrowLeft = targetCenterX - left;
+                            arrowLeft = Math.max(8, Math.min(tipW - 8, arrowLeft)); // 限制在 tooltip 内部
+
+                            // 应用最终位置
+                            tooltip.style.left = left + 'px';
+                            tooltip.style.top = top + 'px';
+                            tooltip.style.right = 'auto';
+                            tooltip.style.bottom = 'auto';
+                            tooltip.style.setProperty('--arrow-left', arrowLeft + 'px');
+
+                            // 设置方向类
+                            tooltip.classList.toggle('tooltip-above', isAbove);
+
+                            // 显示动画
+                            requestAnimationFrame(() => {
+                                tooltip.classList.add('show');
+                            });
+
+                            currentTarget = target;
+                        }
+
+                        // 鼠标移入处理
+                        function onMouseEnter(e) {
+                            const target = e.currentTarget;
+                            // 如果之前有其他元素的 tooltip 正在显示，立即强制隐藏（防闪烁）
+                            if (currentTarget && currentTarget !== target) {
+                                forceHide();
+                            }
+                            showTooltip(target);
+                        }
+
+                        // 鼠标移出处理
+                        function onMouseLeave() {
+                            fadeOut();
+                            currentTarget = null;
+                        }
+
+                        // 绑定事件
+                        elements.forEach(el => {
+                            el.addEventListener('mouseenter', onMouseEnter);
+                            el.addEventListener('mouseleave', onMouseLeave);
+                        });
+
+                        // 全局事件：滚动/缩放/点击时隐藏 tooltip
+                        function onGlobalEvent() {
+                            if (currentTarget) {
+                                forceHide();
+                                currentTarget = null;
+                            }
+                        }
+                        window.addEventListener('scroll', onGlobalEvent, { passive: true });
+                        window.addEventListener('resize', onGlobalEvent);
+                        document.addEventListener('click', onGlobalEvent);
+
+                        // 返回销毁函数
+                        return function destroy() {
+                            elements.forEach(el => {
+                                el.removeEventListener('mouseenter', onMouseEnter);
+                                el.removeEventListener('mouseleave', onMouseLeave);
+                            });
+                            window.removeEventListener('scroll', onGlobalEvent);
+                            window.removeEventListener('resize', onGlobalEvent);
+                            document.removeEventListener('click', onGlobalEvent);
+                            if (tooltip && tooltip.parentNode) {
+                                tooltip.parentNode.removeChild(tooltip);
+                            }
+                        };
+                    };
+
+                    // 自动初始化（也可手动调用，例如 initTooltips('.my-selector')）
+                    initTooltips();
+                })();
+            }
+
+            // 确保 DOM 加载完成后再执行
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+        (function () {
+            createTable(document.getElementById("openfileTable"), {
+                header: {
+                    show: true,
+                    title: '文档列表',
+                    icon: '📄',
+                },
+                table: {
+                    columns: [
+                        { field: 'name', header: '代号', flex: 1 },
+                        { field: 'actions', header: '操作', flex: 2 }
+                    ],
+                    rows: [
+                        {
+                            name: 'R-1',
+                            actions: [
+                                {
+                                    text: '🗑️',
+                                    handler: 'delete',
+                                    style: 'delete',
+                                    title: '删除此文档'
+                                },
+                                {
+                                    text: '📂',
+                                    handler: 'open',
+                                    title: '打开此文档'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            });
+            createTable(document.getElementById("readOutputTable"), {
+                header: {
+                    show: true,
+                    title: '生成列表',
+                    icon: '📋',
+                },
+                table: {
+                    columns: [
+                        { field: 'filename', header: '📃', flex: 1 },
+                        { field: 'actions', header: '⚙️', flex: 1, },
+                    ],
+                    rows: [
+                        {
+                            filename: 'test.pdf',
+                            actions: [
+                                {
+                                    text: '🗑️',
+                                    handler: 'delete',
+                                    style: 'delete',
+                                    title: '删除当前文件'
+                                },
+                                {
+                                    text: '👓',
+                                    handler: 'preview',
+                                    title: '预览当前文件'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            })
+            createTable(
+                document.getElementById("readfileTable"),
+                {
+                    header: {
+                        show: true,
+                        title: '合并列表',
+                        icon: '👨‍💻',
+                    },
+                    table: {
+                        columns: [
+                            { field: 'filename', header: '文件名', flex: 1 },
+                            { field: 'actions', header: '操作', flex: 1 },
+                        ],
+                        rows: [
+                            {
+                                filename: 'test.pdf',
+                                actions: [
+                                    {
+                                        text: '🗑️',
+                                        handler: 'delete',
+                                        style: 'delete',
+                                        title: "删除文件",
+                                        callback: (ctx) => {
+                                            console.log(ctx);
+                                        }
+                                    },
+                                    {
+                                        text: '🔍',
+                                        handler: 'view',
+                                        style: 'view',
+                                        title: "查看文件信息",
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    footer: {
+                        show: true,
+                        text: (rows) => `📊 共 ${rows.length} 个文件`,
+                        class: 'ag-footer-note'
+                    },
+                    modals: {
+                        view: {
+                            title: '文件信息',
+                            subtitle: '基本信息',
+                            fields: [
+                                { label: '文件名', field: 'filename' },
+                                { label: '文件路径', field: 'path' },
+                                { label: '创建日期', field: 'createtime' },
+                                { label: '修改日期', field: "modifytime" },
+                                { label: '文件大小', field: "size" }
+                            ]
+                        }
+                    }
+                }
+            );
+        })();
+    </script>
+</body>
+
+</html>
