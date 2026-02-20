@@ -177,22 +177,17 @@ export function OnNewDocumentApiEvent(doc: { Name: string }) {
  * @param url  任务窗格URL
  */
 export function ToggleTaskPane(url: string) {
-  let tsId = window.Application.PluginStorage.getItem("taskpane_id");
+  let id = url.split("/").pop() || "";
+  if (id === "") return;
+  let item = `taskpane_${id}`;
+  let tsId = window.Application.PluginStorage.getItem(item);
   if (!tsId) {
     let tskpane = window.Application.CreateTaskPane(url);
-    window.Application.PluginStorage.setItem("taskpane_id", tskpane.ID);
-    window.Application.PluginStorage.setItem("taskpane_url", url);
+    window.Application.PluginStorage.setItem(item, tskpane.ID);
     tskpane.Visible = true;
   } else {
     let taskIdNumber = parseInt(tsId, 10);
     let tskpane = window.Application.GetTaskPane(taskIdNumber);
-    let taskpaneUrl = window.Application.PluginStorage.getItem("taskpane_url");
-    if (taskpaneUrl != url) {
-      tskpane.Navigate(url);
-      window.Application.PluginStorage.setItem("taskpane_url", url);
-      tskpane.Visible = true;
-    } else {
-      tskpane.Visible = !tskpane.Visible;
-    }
+    tskpane.Visible = !tskpane.Visible;
   }
 }
