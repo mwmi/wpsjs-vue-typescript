@@ -13,22 +13,22 @@ export function OnAddinLoad(ribbonUI: any) {
   }
 
   if (typeof (window.Application.Enum) != "object") { // 如果没有内置枚举值
-    window.Application.Enum = WPS_Enum
+    window.Application.Enum = WPS_Enum;
   }
 
   //这几个导出函数是给外部业务系统调用的
-  window.openOfficeFileFromSystemDemo = openOfficeFileFromSystemDemo
-  window.InvokeFromSystemDemo = InvokeFromSystemDemo
+  window.openOfficeFileFromSystemDemo = openOfficeFileFromSystemDemo;
+  window.InvokeFromSystemDemo = InvokeFromSystemDemo;
 
-  window.Application.PluginStorage.setItem("EnableFlag", false) //往PluginStorage中设置一个标记，用于控制两个按钮的置灰
-  window.Application.PluginStorage.setItem("ApiEventFlag", false) //往PluginStorage中设置一个标记，用于控制ApiEvent的按钮label
+  window.Application.PluginStorage.setItem("EnableFlag", false); //往PluginStorage中设置一个标记，用于控制两个按钮的置灰
+  window.Application.PluginStorage.setItem("ApiEventFlag", false); //往PluginStorage中设置一个标记，用于控制ApiEvent的按钮label
 
   // 启动后1秒后打开任务窗格
   setTimeout(() => {
-    ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}`)
-  }, 1000)
+    ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}`, "home");
+  }, 1000);
 
-  return true
+  return true;
 }
 
 var WebNotifycount = 0;
@@ -175,15 +175,14 @@ export function OnNewDocumentApiEvent(doc: { Name: string }) {
 /**
  * 切换任务窗格可见性
  * @param url  任务窗格URL
+ * @param name 任务窗格名称
  */
-export function ToggleTaskPane(url: string) {
-  let id = url.split("/").pop() || "";
-  if (id === "") return;
-  let item = `taskpane_${id}`;
-  let tsId = window.Application.PluginStorage.getItem(item);
+export function ToggleTaskPane(url: string, name: string = "") {
+  if (name === "") name = "taskpane_id";
+  let tsId = window.Application.PluginStorage.getItem(name);
   if (!tsId) {
     let tskpane = window.Application.CreateTaskPane(url);
-    window.Application.PluginStorage.setItem(item, tskpane.ID);
+    window.Application.PluginStorage.setItem(name, tskpane.ID);
     tskpane.Visible = true;
   } else {
     let taskIdNumber = parseInt(tsId, 10);
@@ -191,3 +190,4 @@ export function ToggleTaskPane(url: string) {
     tskpane.Visible = !tskpane.Visible;
   }
 }
+
