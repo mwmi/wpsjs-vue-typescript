@@ -88,3 +88,5 @@ yarn.lock
 
 .lingma/
 components.d.ts
+.vscode/settings.json
+.vscode/extensions.json

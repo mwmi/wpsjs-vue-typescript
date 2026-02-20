@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
 import tailwindcss from '@tailwindcss/vite'
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
-// @ts-ignore  // 临时忽略缺少类型声明的问题，待官方提供类型或自行补充声明文件
 import { functionsScanner, copyFile } from "wpsjs/vite_plugins";
 
 export default defineConfig({

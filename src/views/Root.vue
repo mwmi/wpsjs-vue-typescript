@@ -73,7 +73,7 @@ const refreshPage = () => {
       <template #content>
         <div class="flex flex-wrap gap-4 justify-start items-stretch">
           <Card v-for="card in navCards" :key="card.path"
-            class="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1 flex-1 min-w-[280px] max-w-full"
+            class="cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-1 flex-1 min-w-70 max-w-full"
             @click="navigateTo(card.path)">
             <template #content>
               <div class="text-center p-6">
@@ -102,23 +102,24 @@ const refreshPage = () => {
         </div>
       </template>
       <template #content>
-        <div class="flex flex-wrap gap-4">
-          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-[280px] md:flex-1/3">
+        <div class="flex flex-wrap gap-4 justify-center">
+          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-60 max-w-full">
             <i class="pi pi-code text-2xl text-primary mb-2 block"></i>
             <h4 class="font-semibold mb-1">技术栈</h4>
             <p class="text-sm text-surface-600">Vue3 + PrimeVue + Vite</p>
           </div>
-          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-[280px] md:flex-1/3">
+          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-60 max-w-full">
             <i class="pi pi-book text-2xl text-primary mb-2 block"></i>
             <h4 class="font-semibold mb-1">开发文档</h4>
             <p class="text-sm text-surface-600">完善的技术文档支持</p>
           </div>
-          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-[280px] md:flex-1/3">
+          <div class="text-center p-4 bg-surface-100 rounded-lg flex-1 min-w-60 max-w-full">
             <i class="pi pi-bolt text-2xl text-primary mb-2 block"></i>
             <h4 class="font-semibold mb-1">快速开发</h4>
             <p class="text-sm text-surface-600">高效的插件开发体验</p>
           </div>
         </div>
+
       </template>
     </Card>
 
