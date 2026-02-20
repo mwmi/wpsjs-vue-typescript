@@ -172,16 +172,27 @@ export function OnNewDocumentApiEvent(doc: { Name: string }) {
   wpsAlert("新建文件事件响应，取文件名: " + doc.Name);
 }
 
+/**
+ * 切换任务窗格可见性
+ * @param url  任务窗格URL
+ */
 export function ToggleTaskPane(url: string) {
   let tsId = window.Application.PluginStorage.getItem("taskpane_id");
   if (!tsId) {
     let tskpane = window.Application.CreateTaskPane(url);
-    let id = tskpane.ID;
-    window.Application.PluginStorage.setItem("taskpane_id", id);
+    window.Application.PluginStorage.setItem("taskpane_id", tskpane.ID);
+    window.Application.PluginStorage.setItem("taskpane_url", url);
     tskpane.Visible = true;
   } else {
-    let taskIdNumber = parseInt(tsId as string, 10);
+    let taskIdNumber = parseInt(tsId, 10);
     let tskpane = window.Application.GetTaskPane(taskIdNumber);
-    tskpane.Visible = !tskpane.Visible;
+    let taskpaneUrl = window.Application.PluginStorage.getItem("taskpane_url");
+    if (taskpaneUrl != url) {
+      tskpane.Navigate(url);
+      window.Application.PluginStorage.setItem("taskpane_url", url);
+      tskpane.Visible = true;
+    } else {
+      tskpane.Visible = !tskpane.Visible;
+    }
   }
 }
