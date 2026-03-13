@@ -52,6 +52,7 @@ temp/
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+bun.lock
 
 # Typescript build info
 *.tsbuildinfo

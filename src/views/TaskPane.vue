@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import axios from "axios";
 import * as taskPane from "../utils/taskpane.ts";
 import { shellExecute } from "../utils/util.ts";
 
@@ -24,46 +23,9 @@ const onOpenWeb = () => {
 
 const refreshDemoUrl = () => {
   console.log("正在刷新 Demo URL...");
-  axios
-    .get("/.debugTemp/NotifyDemoUrl")
-    .then((res) => {
-      if (
-        typeof res.data === "string" &&
-        res.data.includes("<!doctype html>")
-      ) {
-        DemoSpan.value = "http://localhost:3889";
-        console.log("检测到 HTML 响应，使用默认 URL");
-      } else {
-        DemoSpan.value = res.data;
-        console.log("成功获取 URL:", res.data);
-      }
-    })
-    .catch((error) => {
-      console.warn("刷新 URL 失败:", error);
-      DemoSpan.value = "http://localhost:3889";
-    });
 };
 
 onMounted(() => {
-  axios
-    .get("/.debugTemp/NotifyDemoUrl")
-    .then((res) => {
-      // 检查返回的数据是否是 HTML 页面
-      if (
-        typeof res.data === "string" &&
-        res.data.includes("<!doctype html>")
-      ) {
-        // 如果返回的是 HTML，使用默认的 demo URL
-        DemoSpan.value = "http://localhost:3889";
-      } else {
-        DemoSpan.value = res.data;
-      }
-    })
-    .catch((error) => {
-      console.warn("无法获取 demo URL:", error);
-      // 出错时使用默认 URL
-      DemoSpan.value = "http://localhost:3889";
-    });
 });
 </script>
 

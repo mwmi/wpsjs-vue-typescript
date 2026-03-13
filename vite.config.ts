@@ -23,8 +23,14 @@ export default defineConfig({
       resolvers: [
         PrimeVueResolver()
       ]
-    })
+    }),
   ],
+  css: {
+    transformer: 'lightningcss',
+  },
+  build: {
+    cssTarget: ['chrome104'],
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
