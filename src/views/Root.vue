@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+
+const homeId = ref<string>("");
 
 const router = useRouter();
 
@@ -26,7 +29,11 @@ const navCards: any = [
 
 const navigateTo = (path: string) => {
   console.log("导航到:", path);
-  router.push(path);
+  if (homeId.value) {
+    router.push({ path, query: { id: homeId.value } });
+  } else {
+    router.push({ path });
+  }
 };
 
 const openExternalLink = (url: string) => {
@@ -38,6 +45,10 @@ const refreshPage = () => {
   console.log("刷新页面");
   window.location.reload();
 };
+
+onMounted(() => {
+  if (window.Application)  homeId.value = Application.PluginStorage.getItem("home_id");
+});
 </script>
 
 <template>

@@ -1,4 +1,5 @@
-import { GetUrlPath, wpsAlert } from "../utils/util.ts";
+import { ToggleTaskPane } from "@/ribbon.ts";
+import { GetRouterHash, GetUrlPath, wpsAlert } from "../utils/util.ts";
 
 export function onbuttonclick(idStr: string, _param?: any) {
   switch (idStr) {
@@ -10,21 +11,7 @@ export function onbuttonclick(idStr: string, _param?: any) {
       return doc.Name;
     }
     case "createTaskPane": {
-      let tsId = window.Application.PluginStorage.getItem("taskpane_id");
-      if (!tsId) {
-        let tskpane = window.Application.CreateTaskPane(
-          GetUrlPath() + "/taskpane",
-        );
-        let id = tskpane.ID;
-        window.Application.PluginStorage.setItem("taskpane_id", id);
-        tskpane.Visible = true;
-      } else {
-        // 确保 tsId 是数字类型
-        const taskIdNumber =
-          typeof tsId === "string" ? parseInt(tsId, 10) : (tsId as number);
-        let tskpane = window.Application.GetTaskPane(taskIdNumber);
-        tskpane.Visible = true;
-      }
+      ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}/taskpane`, "taskpane");
       break;
     }
     case "newDoc": {

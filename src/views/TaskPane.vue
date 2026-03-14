@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import * as taskPane from "../utils/taskpane.ts";
 import { shellExecute } from "../utils/util.ts";
+import { useRoute } from "vue-router";
+
+
+const route = useRoute()
+// 直接获取 query 参数
+const queryId = ref(route.query.id)
 
 const DemoSpan = ref<string>("");
 const docName = ref<string>("");
 
 const onbuttonclick = (id: string) => {
-  return taskPane.onbuttonclick(id);
+  return taskPane.onbuttonclick(id, queryId.value as string);
 };
 
 const onDocNameClick = () => {
@@ -24,9 +30,6 @@ const onOpenWeb = () => {
 const refreshDemoUrl = () => {
   console.log("正在刷新 Demo URL...");
 };
-
-onMounted(() => {
-});
 </script>
 
 <template>

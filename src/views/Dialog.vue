@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import * as dlgFunc from "../utils/dialog.ts";
 import { shellExecute } from "../utils/util.ts";
 
@@ -24,9 +24,6 @@ const onOpenWeb = () => {
 const refreshDemoUrl = () => {
   console.log("正在刷新 Demo URL...");
 };
-
-onMounted(() => {
-});
 </script>
 <template>
   <div class="w-full max-w-4xl mx-auto p-4 space-y-6">

@@ -25,7 +25,8 @@ export function OnAddinLoad(ribbonUI: any) {
 
   // 启动后1秒后打开任务窗格
   setTimeout(() => {
-    ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}`, "home");
+    const id = ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}`);
+    Application.PluginStorage.setItem("home_id", id);
   }, 1000);
 
   return true;
@@ -67,7 +68,7 @@ export function OnAction(control: { Id: any }) {
       break;
     case "btnShowTaskPane":
       {
-        ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}/taskpane`);
+        ToggleTaskPane(`${GetUrlPath()}${GetRouterHash()}/taskpane`, "taskpane");
       }
       break;
     case "btnApiEvent":
@@ -177,17 +178,21 @@ export function OnNewDocumentApiEvent(doc: { Name: string }) {
  * @param url  任务窗格URL
  * @param name 任务窗格名称
  */
-export function ToggleTaskPane(url: string, name: string = "") {
+export function ToggleTaskPane(url: string, name: string = ""): number {
   if (name === "") name = "taskpane_id";
   let tsId = window.Application.PluginStorage.getItem(name);
+  let id = 0;
   if (!tsId) {
     let tskpane = window.Application.CreateTaskPane(url);
     window.Application.PluginStorage.setItem(name, tskpane.ID);
     tskpane.Visible = true;
+    id = tskpane.ID;
   } else {
     let taskIdNumber = parseInt(tsId, 10);
+    id = taskIdNumber;
     let tskpane = window.Application.GetTaskPane(taskIdNumber);
     tskpane.Visible = !tskpane.Visible;
   }
+  return id;
 }
 
