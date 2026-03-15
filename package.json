@@ -6,10 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite --port 3889",
-		"build": "vite build",
-		"preview": "vite preview",
-		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-		"format": "prettier --write src/"
+		"build": "vue-tsc -b && vite build"
 	},
 	"dependencies": {
 		"@primeuix/themes": "^2.0.3",

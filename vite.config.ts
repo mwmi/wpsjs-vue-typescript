@@ -1,28 +1,23 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import Components from 'unplugin-vue-components/vite';
 import tailwindcss from '@tailwindcss/vite'
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import Components from 'unplugin-vue-components/vite';
 import { functionsScanner, copyFile } from "wpsjs/vite_plugins";
 
 export default defineConfig({
-  base: './',
   plugins: [
+    vue(),
+    tailwindcss(),
+    Components({
+      resolvers: [PrimeVueResolver()]
+    }),
     copyFile({ src: 'manifest.xml', dest: 'manifest.xml', }),
     copyFile({ src: 'ribbon.xml', dest: 'ribbon.xml', }),
     functionsScanner({
       inputJsPath: 'src/utils/functions.ts',
       outputJsonPath: 'functions.json',
       namespace: 'HelloEt',
-    }),
-    vue(),
-    tailwindcss(),
-    Components({
-      resolvers: [
-        PrimeVueResolver()
-      ]
     }),
   ],
   css: {
@@ -33,10 +28,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': '/src'
     }
   },
   server: {
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    port: 3889
   }
 })
